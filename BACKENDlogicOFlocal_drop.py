@@ -9,7 +9,7 @@ import threading
 import uuid
 from pathlib import Path
 from datetime import datetime
-from flask import Flask, request, render_template_string, send_file, jsonify, redirect
+from flask import Flask, request, render_template_string, send_file, jsonify, redirect, send_from_directory
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 log = logging.getLogger('werkzeug')
@@ -498,6 +498,8 @@ def file_icon(filename):
     return f'<svg style="{S}" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>'
 
 # ── Routes ────────────────────────────────────────────────────────────────────
+FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend', 'dist')
+
 @app.route('/manifest.json')
 def serve_manifest():
     return jsonify(MANIFEST_JSON)
@@ -508,10 +510,26 @@ def index():
     ua = request.headers.get('User-Agent', '')
     register_client(ip, ua, 'viewer')
     prune_stale()
-    
+    built_html = os.path.join(FRONTEND_DIST, 'index.html')
+    if os.path.exists(built_html):
+        return send_from_directory(FRONTEND_DIST, 'index.html')
+    return render_template_string(HTML_TEMPLATE, files=get_all_network_files(), session_token=SESSION_TOKEN)
+
+@app.route('/vault')
+def vault():
+    ip = request.remote_addr
+    ua = request.headers.get('User-Agent', '')
+    register_client(ip, ua, 'viewer')
+    prune_stale()
     sorted_files = get_all_network_files()
-        
     return render_template_string(HTML_TEMPLATE, files=sorted_files, session_token=SESSION_TOKEN)
+
+@app.route('/api/info')
+def api_info():
+    ip = get_local_ip()
+    port = int(os.environ.get('PORT', 5000))
+    url = f'http://{ip}:{port}'
+    return jsonify({'ip': ip, 'port': port, 'url': url})
 
 @app.route('/api/ping', methods=['POST'])
 def api_ping():
