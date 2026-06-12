@@ -517,19 +517,25 @@ def index():
 
 @app.route('/vault')
 def vault():
-    ip = request.remote_addr
-    ua = request.headers.get('User-Agent', '')
-    register_client(ip, ua, 'viewer')
-    prune_stale()
-    sorted_files = get_all_network_files()
-    return render_template_string(HTML_TEMPLATE, files=sorted_files, session_token=SESSION_TOKEN)
+    # Redirect old dark vault to the new React app
+    return redirect('/', code=302)
 
 @app.route('/api/info')
 def api_info():
     ip = get_local_ip()
     port = int(os.environ.get('PORT', 5000))
-    url = f'http://{ip}:{port}'
+    # Use the actual host the client is connecting through (Replit proxy, LAN, etc.)
+    proto = request.headers.get('X-Forwarded-Proto', 'http')
+    host  = request.headers.get('X-Forwarded-Host', request.host)
+    if host and host != f'{ip}:{port}' and host != 'localhost':
+        url = f'{proto}://{host}'
+    else:
+        url = f'http://{ip}:{port}'
     return jsonify({'ip': ip, 'port': port, 'url': url})
+
+@app.route('/api/session-token')
+def api_session_token():
+    return jsonify({'token': SESSION_TOKEN})
 
 @app.route('/api/ping', methods=['POST'])
 def api_ping():
@@ -555,10 +561,34 @@ def api_devices():
         devices  = [{'id': c['id'], 'device': c['device'], 'role': c['role']} for c in connected_clients.values()]
     return jsonify({'devices': devices, 'my_id': my_ip})
 
+def get_file_type(filename: str) -> str:
+    ext = filename.lower().rsplit('.', 1)[-1] if '.' in filename else ''
+    if ext in {'jpg','jpeg','png','gif','bmp','webp','heic','heif','raw','svg','tiff','ico'}: return 'images'
+    if ext in {'mp4','mov','avi','mkv','webm','flv','wmv','m4v','3gp','ts'}: return 'videos'
+    if ext in {'mp3','wav','aac','flac','m4a','ogg','wma','alac','opus'}: return 'audios'
+    if ext in {'pdf','doc','docx','txt','xls','xlsx','ppt','pptx','csv','json','xml','md','rtf','odt'}: return 'docs'
+    if ext in {'py','js','ts','jsx','tsx','html','css','scss','cpp','c','h','java','rb','go','rs','php','swift','kt','sh','bash','yaml','yml','toml','ini','env','vue','dart','lua','sql','r','m','gradle','cmake'}:
+        return 'code'
+    if ext in {'zip','tar','gz','rar','7z','bz2','xz','tar.gz','tgz'}: return 'zip'
+    return 'others'
+
 @app.route('/api/files')
 def api_files():
     sorted_files = get_all_network_files()
-    file_data = [{'name': f, 'icon': file_icon(f)} for f in sorted_files]
+    seen = set()
+    file_data = []
+    search_paths = list(get_target_directories().values()) + [get_inbox_directory()]
+    for fname in sorted_files:
+        if fname in seen:
+            continue
+        seen.add(fname)
+        size = None
+        for d in search_paths:
+            fp = os.path.join(d, fname)
+            if os.path.exists(fp):
+                size = os.path.getsize(fp)
+                break
+        file_data.append({'name': fname, 'icon': file_icon(fname), 'size': size, 'fileType': get_file_type(fname)})
     return jsonify({'files': file_data})
 
 @app.route('/upload', methods=['POST'])
