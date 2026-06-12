@@ -617,7 +617,7 @@ if __name__ == '__main__':
     os.makedirs(inbox, exist_ok=True)
 
     ip_addr     = get_local_ip()
-    port_num    = 5001
+    port_num    = int(os.environ.get('PORT', 5000))
     hosting_url = f"http://{ip_addr}:{port_num}"
 
     def graceful_shutdown(sig, frame):
