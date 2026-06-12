@@ -1,3 +1,6 @@
 flask
 qrcode
 gunicorn
+python-dotenv
+flask-socketio
+eventlet
