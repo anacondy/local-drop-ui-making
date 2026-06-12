@@ -7,7 +7,7 @@ interface HeaderBarProps {
 export default function HeaderBar({ title }: HeaderBarProps) {
   return (
     <div className="flex items-center justify-between px-5 py-2">
-      {/* Close button - glossomorphic raised 3D */}
+      {/* Close button */}
       <motion.button
         whileTap={{ scale: 0.9 }}
         className="w-10 h-10 rounded-full flex items-center justify-center"
@@ -26,7 +26,7 @@ export default function HeaderBar({ title }: HeaderBarProps) {
         </svg>
       </motion.button>
 
-      {/* Title with subtle branding */}
+      {/* Title */}
       <div className="flex flex-col items-center">
         <h1 className="text-[18px] font-bold tracking-tight text-gloss-dark">
           {title}
@@ -36,10 +36,11 @@ export default function HeaderBar({ title }: HeaderBarProps) {
         </span>
       </div>
 
-      {/* Settings button - glossomorphic raised 3D */}
-      <motion.button
+      {/* Download / Vault button */}
+      <motion.a
+        href="/vault"
         whileTap={{ scale: 0.9 }}
-        className="w-10 h-10 rounded-full flex items-center justify-center"
+        className="w-10 h-10 rounded-full flex items-center justify-center no-underline"
         style={{
           background: 'linear-gradient(145deg, #ffffff, #e6e6e9)',
           boxShadow: `
@@ -50,11 +51,12 @@ export default function HeaderBar({ title }: HeaderBarProps) {
           border: '1px solid rgba(255, 255, 255, 0.5)',
         }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z" />
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3v13" />
+          <path d="M7 11l5 5 5-5" />
+          <path d="M4 20h16" />
         </svg>
-      </motion.button>
+      </motion.a>
     </div>
   );
 }

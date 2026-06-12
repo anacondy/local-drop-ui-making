@@ -48,7 +48,7 @@ export default function ConnectedDevices({ devices, networkName, port }: Connect
   return (
     <div className="px-5 pb-2">
       <div
-        className="rounded-[22px] p-4"
+        className="rounded-[22px] p-3"
         style={{
           background: 'linear-gradient(145deg, #ffffff, #ebebee)',
           boxShadow: `
@@ -59,7 +59,7 @@ export default function ConnectedDevices({ devices, networkName, port }: Connect
           border: '1px solid rgba(255, 255, 255, 0.6)',
         }}
       >
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2.5">
             <div
               className="w-8 h-8 rounded-xl flex items-center justify-center"

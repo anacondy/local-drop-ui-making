@@ -5,7 +5,6 @@ import HeaderBar from './components/HeaderBar';
 import ModeToggle from './components/ModeToggle';
 import QRCodeView from './components/QRCodeView';
 import ScannerView from './components/ScannerView';
-import PlatformRow from './components/PlatformRow';
 import ConnectedDevices from './components/ConnectedDevices';
 import type { Device } from './components/ConnectedDevices';
 
@@ -108,11 +107,7 @@ export default function App() {
         <StatusBar />
         <HeaderBar title="LocalDrop" />
 
-        <div className="mt-1">
-          <PlatformRow />
-        </div>
-
-        <div className="mt-3">
+        <div className="mt-2">
           <ModeToggle mode={mode} onToggle={handleModeToggle} />
         </div>
 
@@ -170,21 +165,6 @@ export default function App() {
         </div>
 
         <div className="shrink-0">
-          <div className="flex justify-center pb-3">
-            <motion.a
-              href="/vault"
-              whileTap={{ scale: 0.95 }}
-              className="gloss-dark-pill text-white text-[12px] font-semibold px-6 py-3 rounded-2xl flex items-center gap-2.5 no-underline"
-            >
-              <div className="w-5 h-5 rounded-lg bg-white/15 flex items-center justify-center">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
-                </svg>
-              </div>
-              Open File Vault
-            </motion.a>
-          </div>
-
           <ConnectedDevices devices={devices} networkName="LocalDrop_Network" port={serverInfo?.port ?? 5000} />
 
           <div className="flex justify-center pb-3 pt-1">

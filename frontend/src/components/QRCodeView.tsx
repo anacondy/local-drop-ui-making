@@ -30,32 +30,34 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center px-6 py-2 w-full">
+    <div className="flex flex-col items-center px-4 py-1 w-full">
+      {/* QR Code */}
       <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.92 }}
-        animate={{ opacity: isReady ? 1 : 0, y: isReady ? 0 : 20, scale: isReady ? 1 : 0.92 }}
+        initial={{ opacity: 0, y: 16, scale: 0.93 }}
+        animate={{ opacity: isReady ? 1 : 0, y: isReady ? 0 : 16, scale: isReady ? 1 : 0.93 }}
         transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         className="relative"
       >
-        <div className="rounded-[28px] p-[2px]"
+        <div
+          className="rounded-[24px] p-[2px]"
           style={{
             background: 'linear-gradient(145deg, rgba(255,255,255,0.9), rgba(220,220,223,0.6))',
           }}
         >
           <div
-            className="rounded-[26px] p-5"
+            className="rounded-[22px] p-4"
             style={{
               background: 'linear-gradient(145deg, #ffffff, #f0f0f3)',
               boxShadow: `
-                8px 8px 24px rgba(0, 0, 0, 0.08),
-                -8px -8px 24px rgba(255, 255, 255, 0.95),
+                6px 6px 20px rgba(0, 0, 0, 0.08),
+                -6px -6px 20px rgba(255, 255, 255, 0.95),
                 inset 0 2px 0 rgba(255, 255, 255, 0.9),
                 inset 0 -1px 0 rgba(0, 0, 0, 0.03)
               `,
             }}
           >
             <div
-              className="rounded-[18px] p-4 relative overflow-hidden"
+              className="rounded-[14px] p-3 relative overflow-hidden"
               style={{
                 background: '#ffffff',
                 boxShadow: `
@@ -67,21 +69,21 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
               <div
                 className="absolute top-0 left-0 right-0 h-1/2 pointer-events-none"
                 style={{
-                  background: 'linear-gradient(180deg, rgba(255,255,255,0.6) 0%, transparent 100%)',
-                  borderRadius: '18px 18px 0 0',
+                  background: 'linear-gradient(180deg, rgba(255,255,255,0.5) 0%, transparent 100%)',
+                  borderRadius: '14px 14px 0 0',
                 }}
               />
               {serverInfo ? (
                 <QRCodeSVG
                   value={url}
-                  size={176}
+                  size={200}
                   bgColor="#ffffff"
                   fgColor="#1c1c1e"
                   level="M"
                   includeMargin={false}
                 />
               ) : (
-                <div className="w-[176px] h-[176px] flex items-center justify-center">
+                <div className="w-[200px] h-[200px] flex items-center justify-center">
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
@@ -93,13 +95,14 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
           </div>
         </div>
 
+        {/* Badge */}
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.4, type: 'spring', stiffness: 400 }}
-          className="absolute -top-2 -right-2 gloss-dark-pill w-10 h-10 rounded-2xl flex items-center justify-center"
+          className="absolute -top-2 -right-2 gloss-dark-pill w-9 h-9 rounded-2xl flex items-center justify-center"
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M5 12.55a11 11 0 0114.08 0" />
             <path d="M8.53 16.11a6 6 0 016.95 0" />
             <line x1="12" y1="20" x2="12.01" y2="20" />
@@ -107,14 +110,15 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
         </motion.div>
       </motion.div>
 
+      {/* URL bar */}
       <motion.div
-        initial={{ opacity: 0, y: 12 }}
+        initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2, duration: 0.4 }}
-        className="mt-5 w-full max-w-[300px]"
+        className="mt-4 w-full max-w-[290px]"
       >
         <div
-          className="rounded-2xl px-4 py-3 flex items-center gap-3"
+          className="rounded-2xl px-3 py-2.5 flex items-center gap-2.5"
           style={{
             background: 'linear-gradient(145deg, #e6e6e9, #eeeef1)',
             boxShadow: `
@@ -124,27 +128,27 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
             border: '1px solid rgba(0, 0, 0, 0.03)',
           }}
         >
-          <div className="w-8 h-8 rounded-xl gloss-raised-sm flex items-center justify-center shrink-0">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <div className="w-7 h-7 rounded-xl gloss-raised-sm flex items-center justify-center shrink-0">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" />
               <path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71" />
             </svg>
           </div>
           <div className="flex flex-col min-w-0 flex-1">
-            <span className="text-[10px] text-gloss-mid font-semibold uppercase tracking-widest">Share URL</span>
+            <span className="text-[9px] text-gloss-mid font-semibold uppercase tracking-widest">Share URL</span>
             <span className="text-[13px] font-bold text-gloss-dark truncate tracking-tight">{url}</span>
           </div>
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={handleCopy}
-            className="gloss-raised-sm w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+            className="gloss-raised-sm w-7 h-7 rounded-xl flex items-center justify-center shrink-0"
           >
             {copied ? (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#34c759" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#34c759" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             ) : (
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#1c1c1e" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="9" y="9" width="13" height="13" rx="2" />
                 <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
               </svg>
@@ -157,9 +161,9 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.35 }}
-        className="mt-3 text-[12px] text-gloss-mid text-center leading-relaxed max-w-[250px]"
+        className="mt-2 text-[11px] text-gloss-mid text-center leading-relaxed max-w-[240px]"
       >
-        Scan this QR code from another device on the same network to connect instantly
+        Scan from another device on the same network to connect instantly
       </motion.p>
     </div>
   );
