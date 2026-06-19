@@ -33,8 +33,15 @@ export default function ModeToggle({ mode, onToggle }: ModeToggleProps) {
             `,
           }}
           initial={false}
+          style={{
+            width: 'calc(50% - 6px)',
+            left: '6px',
+            background: 'linear-gradient(145deg, #2c2c2e, #1a1a1c)',
+            boxShadow: `4px 4px 12px rgba(0, 0, 0, 0.3), -1px -1px 4px rgba(255, 255, 255, 0.05)`,
+          }}
+          initial={false}
           animate={{
-            left: mode === 'qr' ? '6px' : 'calc(50% + 0px)',
+            x: mode === 'qr' ? 0 : '100%',
           }}
           transition={{
             type: 'spring',
@@ -74,7 +81,7 @@ export default function ModeToggle({ mode, onToggle }: ModeToggleProps) {
           </span>
         </button>
 
-        {/* Scanner tab */}
+        {/* Files tab */}
         <button
           onClick={() => onToggle('scan')}
           className="relative z-10 flex-1 flex items-center justify-center gap-2 py-3 rounded-[16px]"
@@ -88,17 +95,17 @@ export default function ModeToggle({ mode, onToggle }: ModeToggleProps) {
             strokeLinecap="round"
             strokeLinejoin="round"
             className="transition-all duration-300"
-            stroke={mode === 'scan' ? '#ffffff' : '#8e8e93'}
+            stroke={mode === 'files' ? '#ffffff' : '#8e8e93'}
           >
-            <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
-            <circle cx="12" cy="13" r="4" />
+            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
           </svg>
           <span
             className={`text-[13px] font-bold tracking-tight transition-all duration-300 ${
-              mode === 'scan' ? 'text-white' : 'text-gloss-mid'
+              mode === 'files' ? 'text-white' : 'text-gloss-mid'
             }`}
           >
-            Scanner
+            Files
           </span>
         </button>
       </div>

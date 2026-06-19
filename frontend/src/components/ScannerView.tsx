@@ -44,7 +44,7 @@ export default function ScannerView({ onFilesClick }: ScannerViewProps) {
       setIsActive(true);
       setScanning(true);
     } catch {
-      setCameraError('Camera access denied. Please allow camera permission and try again.');
+      setCameraError('Camera blocked. On local networks, please use your phone\'s native Camera app to scan the host PC instead!');
     }
   }, []);
 

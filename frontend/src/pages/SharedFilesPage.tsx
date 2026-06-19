@@ -6,6 +6,7 @@ interface SharedFile {
   name: string;
   icon: string;
   size?: number;
+  timestamp?: number;
   fileType?: string;
 }
 
@@ -14,6 +15,13 @@ function formatSize(bytes?: number) {
   if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
   if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
   return `${(bytes / 1024).toFixed(1)} KB`;
+}
+
+function formatDate(ts?: number) {
+  if (!ts) return '';
+  const d = new Date(ts * 1000);
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  return `${d.getDate()} ${months[d.getMonth()]}, ${d.getFullYear().toString().slice(2)}`;
 }
 
 export default function SharedFilesPage({ onBack }: { onBack: () => void }) {
@@ -79,9 +87,27 @@ export default function SharedFilesPage({ onBack }: { onBack: () => void }) {
                     }}>
                       <span dangerouslySetInnerHTML={{ __html: file.icon }} />
                     </div>
-                    <div className="flex-1 min-w-0">
+                    <div 
+                      className="flex-1 min-w-0 cursor-pointer"
+                      onTouchStart={() => {
+                        window.__holdTimer = setTimeout(() => {
+                           alert(`File: ${file.name}\nSize: ${formatSize(file.size)}\nDate: ${new Date((file.timestamp||0)*1000).toLocaleString()}`);
+                        }, 600);
+                      }}
+                      onTouchEnd={() => clearTimeout(window.__holdTimer)}
+                      onMouseDown={() => {
+                        window.__holdTimer = setTimeout(() => {
+                           alert(`File: ${file.name}\nSize: ${formatSize(file.size)}\nDate: ${new Date((file.timestamp||0)*1000).toLocaleString()}`);
+                        }, 600);
+                      }}
+                      onMouseUp={() => clearTimeout(window.__holdTimer)}
+                      onMouseLeave={() => clearTimeout(window.__holdTimer)}
+                    >
                       <p className="text-[13px] font-bold text-gloss-dark truncate">{file.name}</p>
-                      {file.size && <p className="text-[10px] text-gloss-mid font-medium">{formatSize(file.size)}</p>}
+                      <div className="flex gap-2 items-center mt-0.5">
+                        {file.size && <p className="text-[10px] text-gloss-mid font-medium">{formatSize(file.size)}</p>}
+                        {file.timestamp && <p className="text-[10px] text-gloss-mid/70">• {formatDate(file.timestamp)}</p>}
+                      </div>
                     </div>
                     <a
                       href={`/download/${encodeURIComponent(file.name)}`}

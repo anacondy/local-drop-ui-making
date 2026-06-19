@@ -20,7 +20,7 @@ interface ServerInfo {
 function mapDeviceType(dtype: string): Device['platform'] {
   if (dtype === 'mobile') return 'android';
   if (dtype === 'tablet') return 'android';
-  return 'macos';
+  return 'windows';
 }
 
 function mapDeviceName(dtype: string, ip: string): string {
@@ -32,7 +32,7 @@ function mapDeviceName(dtype: string, ip: string): string {
 
 export default function App() {
   const [page, setPage] = useState<Page>('home');
-  const [mode, setMode] = useState<'qr' | 'scan'>('qr');
+  const [mode, setMode] = useState<'qr' | 'files'>('qr');
   const [devices, setDevices] = useState<Device[]>([]);
   const [serverInfo, setServerInfo] = useState<ServerInfo | null>(null);
   const [direction, setDirection] = useState(0);
@@ -65,15 +65,15 @@ export default function App() {
   }, []);
 
   const handleModeToggle = useCallback((newMode: 'qr' | 'scan') => {
-    setDirection(newMode === 'scan' ? 1 : -1);
+    setDirection(newMode === 'files' ? 1 : -1);
     setMode(newMode);
   }, []);
 
   const handleSwipe = useCallback(
     (_: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
       const threshold = 50;
-      if (info.offset.x < -threshold && mode === 'qr') { setDirection(1); setMode('scan'); }
-      else if (info.offset.x > threshold && mode === 'scan') { setDirection(-1); setMode('qr'); }
+      if (info.offset.x < -threshold && mode === 'qr') { setDirection(1); setMode('files'); }
+      else if (info.offset.x > threshold && mode === 'files') { setDirection(-1); setMode('qr'); }
     },
     [mode]
   );
@@ -116,7 +116,7 @@ export default function App() {
               {mode === 'qr' ? (
                 <QRCodeView serverInfo={serverInfo} />
               ) : (
-                <ScannerView onFilesClick={() => setPage('file-browser')} />
+                <FileBrowserPage onBack={() => {}} />
               )}
             </motion.div>
           </AnimatePresence>
@@ -128,19 +128,36 @@ export default function App() {
               className="h-2 rounded-full"
             />
             <motion.div
-              animate={{ width: mode === 'scan' ? 20 : 8, backgroundColor: mode === 'scan' ? '#1c1c1e' : '#c7c7cc' }}
+              animate={{ width: mode === 'files' ? 20 : 8, backgroundColor: mode === 'files' ? '#1c1c1e' : '#c7c7cc' }}
               transition={{ type: 'spring', stiffness: 400, damping: 25 }}
               className="h-2 rounded-full"
             />
           </div>
         </div>
 
-        <div className="shrink-0">
-          <ConnectedDevices devices={devices} networkName="LocalDrop_Network" port={serverInfo?.port ?? 5000} />
-          <div className="flex justify-center pb-3 pt-1">
-            <div className="w-[134px] h-[5px] rounded-full bg-gloss-dark/20" />
+        {/* Draggable Bottom Sheet for Network Panel (Hidden in Files mode) */}
+        <motion.div 
+          className="absolute bottom-0 left-0 right-0 z-50 bg-gloss-bg rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] border-t border-white/60"
+          drag="y"
+          dragConstraints={{ top: 0, bottom: 200 }}
+          dragElastic={0.2}
+          initial={{ y: 0 }}
+          animate={{ y: mode === 'files' ? 300 : 0, opacity: mode === 'files' ? 0 : 1 }}
+          style={{ 
+            touchAction: "none",
+            willChange: "transform",
+            WebkitBackfaceVisibility: "hidden",
+            transform: "translateZ(0)",
+            pointerEvents: mode === 'files' ? 'none' : 'auto'
+          }}
+        >
+          <div className="w-full flex justify-center pt-3 pb-1 cursor-grab active:cursor-grabbing">
+            <div className="w-[40px] h-[5px] rounded-full bg-gloss-mid/40" />
           </div>
-        </div>
+          <div className="px-1 pb-4">
+            <ConnectedDevices devices={devices} networkName="LocalDrop_Network" port={serverInfo?.port ?? 5000} />
+          </div>
+        </motion.div>
       </div>
     </div>
   );

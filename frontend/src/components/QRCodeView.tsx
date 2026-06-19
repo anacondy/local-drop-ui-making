@@ -16,10 +16,9 @@ export default function QRCodeView({ serverInfo }: QRCodeViewProps) {
   const [isReady, setIsReady] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  // Use the actual URL the client is accessing — this is the correct shareable URL
-  const shareUrl = window.location.origin;
-  // Display URL from serverInfo for the label, fallback to origin
-  const displayUrl = serverInfo?.url ?? shareUrl;
+  // Force the use of the backend's real LAN IP for the QR code and link
+  const shareUrl = serverInfo?.url ?? window.location.origin;
+  const displayUrl = shareUrl;
 
   useEffect(() => {
     const timer = setTimeout(() => setIsReady(true), 150);

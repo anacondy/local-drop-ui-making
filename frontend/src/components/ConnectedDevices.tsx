@@ -85,9 +85,20 @@ export default function ConnectedDevices({ devices, networkName, port }: Connect
           </div>
           <div className="flex items-center gap-2">
             <motion.div
-              animate={{ opacity: [1, 0.4, 1], scale: [1, 1.3, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="w-[7px] h-[7px] rounded-full bg-wifi-green"
+              key={devices.length}
+              initial={{ x: -10, backgroundColor: devices.length < 1 ? '#ff3b30' : '#34c759' }}
+              animate={{ 
+                x: 0, 
+                backgroundColor: devices.length < 1 ? '#ff3b30' : '#34c759',
+                scale: [1, 1.4, 1],
+                opacity: [1, 0.5, 1]
+              }}
+              transition={{ 
+                x: { type: "spring", stiffness: 300, damping: 20 },
+                scale: { duration: 2, repeat: Infinity },
+                opacity: { duration: 2, repeat: Infinity }
+              }}
+              className="w-[8px] h-[8px] rounded-full"
             />
             <span className="text-[12px] font-bold text-gloss-dark tracking-tight">
               {devices.length} {devices.length === 1 ? 'Node' : 'Nodes'}

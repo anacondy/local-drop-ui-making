@@ -53,7 +53,7 @@ export default function FileBrowserPage({ onBack }: { onBack: () => void }) {
   return (
     <div className="h-full w-full bg-gloss-bg flex justify-center items-center">
       <div className="w-full max-w-[430px] h-full flex flex-col overflow-hidden">
-        <HeaderBar title="Files" subtitle="Browse Storage" onBack={onBack} />
+        
 
         {/* Type filter tabs — fixed */}
         <div className="px-5 pt-1 pb-2 shrink-0">

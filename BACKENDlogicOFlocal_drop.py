@@ -499,7 +499,15 @@ def file_icon(filename):
     return f'<svg style="{S}" fill="none" viewBox="0 0 24 24" stroke="#9ca3af" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/></svg>'
 
 # ── Routes ────────────────────────────────────────────────────────────────────
-FRONTEND_DIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend', 'dist')
+import sys
+if getattr(sys, 'frozen', False):
+    # If the application is run as a bundle (the .exe)
+    base_dir = sys._MEIPASS
+else:
+    # If run from the normal python script
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+
+FRONTEND_DIST = os.path.join(base_dir, 'frontend', 'dist')
 
 @app.route('/manifest.json')
 def serve_manifest():
@@ -515,6 +523,15 @@ def index():
     if os.path.exists(built_html):
         return send_from_directory(FRONTEND_DIST, 'index.html')
     return render_template_string(HTML_TEMPLATE, files=get_all_network_files(), session_token=SESSION_TOKEN)
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    if filename.startswith('api/') or filename.startswith('upload') or filename.startswith('download'):
+        return "Not found", 404
+    file_path = os.path.join(FRONTEND_DIST, filename)
+    if os.path.exists(file_path):
+        return send_from_directory(FRONTEND_DIST, filename)
+    return redirect('/')
 
 @app.route('/vault')
 def vault():
@@ -589,7 +606,16 @@ def api_files():
             if os.path.exists(fp):
                 size = os.path.getsize(fp)
                 break
-        file_data.append({'name': fname, 'icon': file_icon(fname), 'size': size, 'fileType': get_file_type(fname)})
+        
+        # Get modification time for metadata
+        mtime = os.path.getmtime(fp) if fp else time.time()
+        file_data.append({
+            'name': fname, 
+            'icon': file_icon(fname), 
+            'size': size, 
+            'fileType': get_file_type(fname),
+            'timestamp': mtime
+        })
     return jsonify({'files': file_data})
 
 @app.route('/upload', methods=['POST'])
@@ -701,4 +727,13 @@ if __name__ == '__main__':
     P(f"\n  Scan QR above  or  open: {hosting_url}\n")
     P("-" * 55)
 
-    app.run(host='0.0.0.0', port=port_num, debug=False, threaded=True)
+    import threading, webbrowser
+    # Auto-open browser after 1.5 seconds
+    threading.Timer(1.5, lambda: webbrowser.open(f"http://localhost:{port_num}")).start()
+    
+    try:
+        from waitress import serve
+        P(f"  [⚡ Turbo Mode] Multi-threading enabled for max LAN speeds.")
+        serve(app, host='0.0.0.0', port=port_num, threads=16)
+    except ImportError:
+        app.run(host='0.0.0.0', port=port_num, debug=False, threaded=True)
