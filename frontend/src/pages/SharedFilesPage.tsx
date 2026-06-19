@@ -107,7 +107,9 @@ export default function SharedFilesPage({ onBack }: { onBack: () => void }) {
               const fileList = e.target.files;
               if (!fileList?.length) return;
               const fd = new FormData();
-              fd.append('session_token', (window as unknown as { __SESSION_TOKEN__?: string }).__SESSION_TOKEN__ ?? '');
+              const tokenRes = await fetch('/api/session-token');
+              const tokenData = await tokenRes.json();
+              fd.append('session_token', tokenData.token);
               fd.append('client_launch_timestamp', Date.now().toString());
               for (let i = 0; i < fileList.length; i++) fd.append('files', fileList[i]);
               await fetch('/upload', { method: 'POST', body: fd });

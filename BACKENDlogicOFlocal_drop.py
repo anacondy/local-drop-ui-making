@@ -10,6 +10,7 @@ import uuid
 from pathlib import Path
 from datetime import datetime
 from flask import Flask, request, render_template_string, send_file, jsonify, redirect, send_from_directory
+from werkzeug.utils import secure_filename
 
 # ── Logging ───────────────────────────────────────────────────────────────────
 log = logging.getLogger('werkzeug')
@@ -612,11 +613,14 @@ def upload_file():
     for file in files:
         if not file.filename: continue
 
+        safe_name = secure_filename(file.filename)
+        if not safe_name: continue
+
         disk_start = time.time()
         
-        target_dir = route_file(file.filename)
+        target_dir = route_file(safe_name)
         os.makedirs(target_dir, exist_ok=True)
-        filepath = get_unique_filename(target_dir, file.filename)
+        filepath = get_unique_filename(target_dir, safe_name)
         file.save(filepath)
 
         disk_ms   = round((time.time() - disk_start) * 1000)
@@ -638,6 +642,7 @@ def upload_file():
 
 @app.route('/download/<path:filename>')
 def download_file(filename):
+    filename = secure_filename(filename)
     client_ip = request.remote_addr
     ua        = request.headers.get('User-Agent', '')
     register_client(client_ip, ua, 'receiving')
@@ -688,7 +693,10 @@ if __name__ == '__main__':
     qr = qrcode.QRCode(version=1, box_size=1, border=2)
     qr.add_data(hosting_url)
     qr.make(fit=True)
-    qr.print_ascii(invert=True)
+    try:
+        qr.print_ascii(invert=True)
+    except UnicodeEncodeError:
+        print("QR code could not be displayed due to encoding issues.")
 
     P(f"\n  Scan QR above  or  open: {hosting_url}\n")
     P("-" * 55)
