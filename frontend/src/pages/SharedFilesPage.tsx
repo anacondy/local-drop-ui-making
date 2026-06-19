@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import HeaderBar from '../components/HeaderBar';
 
@@ -106,7 +106,7 @@ export default function SharedFilesPage({ onBack }: { onBack: () => void }) {
                       <p className="text-[13px] font-bold text-gloss-dark truncate">{file.name}</p>
                       <div className="flex gap-2 items-center mt-0.5">
                         {file.size && <p className="text-[10px] text-gloss-mid font-medium">{formatSize(file.size)}</p>}
-                        {file.timestamp && <p className="text-[10px] text-gloss-mid/70">• {formatDate(file.timestamp)}</p>}
+                        {file.timestamp && <p className="text-[10px] text-green-500 font-bold">&bull; {formatDate(file.timestamp)}</p>}
                       </div>
                     </div>
                     <a
@@ -158,3 +158,4 @@ export default function SharedFilesPage({ onBack }: { onBack: () => void }) {
     </div>
   );
 }
+

@@ -542,10 +542,9 @@ def vault():
 def api_info():
     ip = get_local_ip()
     port = int(os.environ.get('PORT', 5000))
-    # Use the actual host the client is connecting through (Replit proxy, LAN, etc.)
+    host  = request.headers.get('X-Forwarded-Host', '')
     proto = request.headers.get('X-Forwarded-Proto', 'http')
-    host  = request.headers.get('X-Forwarded-Host', request.host)
-    if host and host != f'{ip}:{port}' and host != 'localhost':
+    if host and 'localhost' not in host and '127.0.0.1' not in host:
         url = f'{proto}://{host}'
     else:
         url = f'http://{ip}:{port}'

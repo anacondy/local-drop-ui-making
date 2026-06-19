@@ -1,9 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+﻿import { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence, type PanInfo } from 'framer-motion';
 import HeaderBar from './components/HeaderBar';
 import ModeToggle from './components/ModeToggle';
 import QRCodeView from './components/QRCodeView';
-import ScannerView from './components/ScannerView';
 import ConnectedDevices from './components/ConnectedDevices';
 import SharedFilesPage from './pages/SharedFilesPage';
 import FileBrowserPage from './pages/FileBrowserPage';
@@ -64,7 +63,7 @@ export default function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleModeToggle = useCallback((newMode: 'qr' | 'scan') => {
+  const handleModeToggle = useCallback((newMode: 'qr' | 'files') => {
     setDirection(newMode === 'files' ? 1 : -1);
     setMode(newMode);
   }, []);
@@ -85,7 +84,6 @@ export default function App() {
   };
 
   if (page === 'shared-files') return <SharedFilesPage onBack={() => setPage('home')} />;
-  if (page === 'file-browser') return <FileBrowserPage onBack={() => setPage('home')} />;
 
   return (
     <div className="h-full w-full bg-gloss-bg flex justify-center items-center">
@@ -120,19 +118,6 @@ export default function App() {
               )}
             </motion.div>
           </AnimatePresence>
-
-          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-2 z-10">
-            <motion.div
-              animate={{ width: mode === 'qr' ? 20 : 8, backgroundColor: mode === 'qr' ? '#1c1c1e' : '#c7c7cc' }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="h-2 rounded-full"
-            />
-            <motion.div
-              animate={{ width: mode === 'files' ? 20 : 8, backgroundColor: mode === 'files' ? '#1c1c1e' : '#c7c7cc' }}
-              transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-              className="h-2 rounded-full"
-            />
-          </div>
         </div>
 
         {/* Draggable Bottom Sheet for Network Panel (Hidden in Files mode) */}
